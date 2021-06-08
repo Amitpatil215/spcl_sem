@@ -1,6 +1,6 @@
 #include <stdio.h>
 #define MAX 200
-/* Interpolation search function */
+
 int interpolation_search(int a[], int bottom, int top, int item)
 {
     int mid;
@@ -16,8 +16,7 @@ int interpolation_search(int a[], int bottom, int top, int item)
     }
     return -1;
 }
-/* End of interpolation_search() */
-/* The main() begins */
+
 int main()
 {
     int arr[MAX];
