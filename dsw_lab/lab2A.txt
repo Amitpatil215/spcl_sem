@@ -1,0 +1,160 @@
+create DATABASE mobile;
+
+use mobile;
+
+CREATE TABLE vender (
+	vid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	vname CHAR(25),
+	vaddress CHAR(25)
+);
+
+
+INSERT INTO vender
+	(vid, vname, vaddress) VALUES
+		(001, 'Samsung', 'Delhi'),
+		(002, 'Sony', 'Pune'),
+		(003, 'Jio', 'Mumbai'),
+		(004, 'Apple', 'Delhi'),
+		(005, 'Samsung', 'Noida'),
+		(006, 'Sony', 'Benglore'),
+		(007, 'Nokia', 'Hydrabad'),
+		(008, 'Oneplus', 'Mumbai');
+
+CREATE TABLE components (
+	cid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	cname CHAR(25)
+);
+
+INSERT INTO components
+	(cid, cname) VALUES
+		(001, 'Screen'),
+		(002, 'Camera'),
+		(003, 'Processor'),
+		(004, 'Chips'),
+		(005, 'Antena'),
+		(006, 'radio'),
+		(007, 'Gyroscope'),
+		(008, 'Speaker');
+
+CREATE TABLE catalog (
+	cid INT,
+	vid INT,
+	cost INT
+);
+
+
+INSERT INTO catalog
+	(cid, vid,cost) VALUES
+		(001, '8',10000),
+		(002, '3', 20000),
+		(003, '4', 100),
+		(004, '2', 300),
+		(005, '1', 40),
+		(006, '5', 50),
+		(007, '7',60),
+		(008, '3', 120);
+
+Q1.
+select cname from components
+where cid IN
+(select cid from catalog);
+
+Q2.
+select vname from vender
+where vid IN
+(select vid from catalog
+where cid IN
+	(select cid from components
+	where cname="camera")
+);
+
+Q3.
+select vid from vender
+where vid IN
+(select vid from catalog
+where cid IN
+	(select cid from components
+	where cname="camera" OR cname="radio")
+);
+
+Q4.
+select vid from vender
+where vid IN
+(select vid from catalog
+where cid IN
+	(select cid from components
+	where cname="Antena")
+)
+OR
+vaddress='Noida'
+;
+
+Q5.
+select c.cname, cat.cost
+FROM vender v, catalog cat,components c
+where v.vname='samsung' AND
+ v.vid=cat.vid And
+ c.cid=cat.cid;
+
+Q6.
+select c.cname,MAX(cat.cost)
+FROM catalog cat, components c
+where cat.cid=c.cid AND cat.cost=
+(
+	select MAX(cat.cost)
+	from catalog cat
+);
+
+Q7.
+select v.vname, cat.cost
+FROM vender v, catalog cat,components c
+where v.vname='proximity_sensor' AND
+ v.vid=cat.vid And
+ c.cid=cat.cid and cat.cost=
+(
+	select MIN(cat.cost)
+	from catalog cat, components c
+	where  c.cname='camera'
+);
+
+Q8.
+select v.vname, count(*)
+FROM vender v, catalog cat
+where cat.vid=v.vid
+group by cat.vid
+ORDER by count(*) desc
+LIMIT 1
+;
+
+Q9.
+select v.vname
+FROM vender v, catalog cat
+where cat.vid=v.vid and
+cat.cost <100
+group by v.vname
+;
+// group by is used for removing duplicacy
+
+Q10
+select c.cname, cat.cost
+FROM vender v, catalog cat,components c
+where v.vname <>'sony' AND
+ v.vid=cat.vid And
+ c.cid=cat.cid;
+
+Q11
+select c.cname, cat.cost
+FROM vender v, catalog cat,components c
+where
+v.vname ='sony' AND
+ v.vid=cat.vid And
+ c.cid=cat.cid;
+
+Q12
+select c.cname, cat.cost
+FROM vender v, catalog cat,components c
+where
+v.vname ='samsung' and
+v.vname <>'sony' AND
+ v.vid=cat.vid And
+ c.cid=cat.cid;
