@@ -1,0 +1,58 @@
+create DATABASE work;
+
+use work;
+
+CREATE TABLE emp (
+	eid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	ename CHAR(25),
+    age INT,
+    salery double
+);
+
+INSERT INTO emp
+	(eid, ename, age, salery) VALUES
+		(1, 'Rakesh',22, 12000),
+		(2, 'Ramesh',32, 1800),
+		(3, 'Mandeep',34, 10000),
+		(4, 'Moksh',21, 90000),
+		(5, 'Sad',33, 1400),
+		(6, 'Gulshan',40, 800),
+		(7, 'Guru',41, 350),
+		(8, 'Sk',22, 1000);
+
+CREATE TABLE Dept(
+	did INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	dname CHAR(25),
+    budget INT,
+    managerid INT
+);
+
+INSERT INTO dept
+	(did, dname, budget, managerid) VALUES
+		(101, 'IT',2200, 501),
+		(102, 'Computing',3200, 502),
+		(103, 'finince',3400, 503),
+		(104, 'fintec',2100, 504),
+		(105, 'support',3300, 505),
+		(106, 'field',4000, 506),
+		(107, 'technical',4100, 507),
+		(108, 'computing',2200, 508);
+
+CREATE TABLE works(
+    eid INT ,
+    did INT ,
+    pct INT ,
+    FOREIGN KEY (eid) REFERENCES emp(eid),
+    FOREIGN KEY (did) REFERENCES dept(did)
+);
+
+INSERT INTO works
+	(eid, did, pct) VALUES
+		(1,101,100),
+		(2,102,20),
+		(2,101, 50),
+		(4,104, 10),
+		(2,102, 40),
+		(4,106, 10),
+		(5,104, 20),
+		(7,102, 70);
