@@ -56,3 +56,33 @@ INSERT INTO works
 		(4,106, 10),
 		(5,104, 20),
 		(7,102, 70);
+
+Q1.
+select ename, age
+from emp
+where eid IN
+    (select eid from works
+    where did IN
+        (
+            select did from dept
+            where dname='IT'
+        )
+        And
+         (
+            select did from dept
+            where dname='Computing'
+            LIMIT 1
+        )
+    );
+
+Q2
+select did, count(did)
+from works
+group by did
+having 200<(
+    select sum(pct)
+    from works;
+)
+
+Q3.
+
