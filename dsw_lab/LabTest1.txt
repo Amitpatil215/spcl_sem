@@ -50,3 +50,24 @@ INSERT INTO tbl_orderitems
         (2,4,6),
         (2,5,4),
         (2, 6, 1);
+
+Q2.
+select count(*)
+from tbl_item
+where itemName like "B%" OR itemName like "%k";
+
+Q3.
+select i.itemName, sum(o.quantity) as quantity
+from tbl_item i, tbl_orderItems o
+where i.id = o.itemId
+group by o.itemId;
+
+Q4.
+Select itemname from tbl_item
+where id not in
+    (
+    select id from
+    tbl_orderitems
+    );
+
+Q5
