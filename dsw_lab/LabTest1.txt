@@ -1,0 +1,52 @@
+create DATABASE shop;
+
+use shop;
+
+CREATE TABLE tbl_order(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	orderdate DATE NOT NULL,
+    customerid INT,
+    orderamount int
+);
+
+INSERT INTO tbl_order
+	(id, orderdate, customerid, orderamount) VALUES
+		(1, '2020-11-10',10, 82),
+		(2, '2020-11-15',14,116);
+
+
+CREATE TABLE tbl_item(
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    itemname CHAR(25) ,
+    unitprice INT UNIQUE ,
+    stock INT NOT NULL
+);
+
+INSERT INTO tbl_item
+	(id, itemname, unitprice, stock) VALUES
+		(1, 'Bread',30, 5),
+        (2, 'Butter',46, 10),
+        (3, 'Milk',45, 10),
+        (4, 'Eggs',6, 60),
+        (5, 'Parle-G',5,100),
+        (6, 'Rusk',35, 20);
+
+CREATE TABLE tbl_orderitems(
+    orderid INT ,
+    itemid INT ,
+    quantity INT NOT NULL,
+    FOREIGN KEY (orderid) REFERENCES tbl_order(id),
+    FOREIGN KEY (itemid) REFERENCES tbl_item(id),
+    PRIMARY KEY(orderid,itemid)
+);
+
+INSERT INTO tbl_orderitems
+	(orderid, itemid, quantity) VALUES
+		(1, 1, 2),
+        (1,3, 1),
+        (1, 4, 12),
+        (2, 1, 1),
+        (2,2,2),
+        (2,4,6),
+        (2,5,4),
+        (2, 6, 1);
