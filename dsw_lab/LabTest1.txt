@@ -71,3 +71,51 @@ where id not in
     );
 
 Q5
+SELECT DISTINCT i.itemName
+    FROM tbl_Item i
+     where i.id IN
+     (
+         select itemId
+         from tbl_orderItems
+         group by itemId
+         having count(itemId) IN
+
+           (select max(cnt) from
+            (select itemId, count(itemId) as cnt from tbl_orderItems
+            group by itemid) rc)
+     );
+
+Q6
+SELECT DISTINCT t.customerid
+     FROM tbl_Item i, Tbl_order t, Tbl_OrderItems o
+     WHERE t.id=o.orderid AND
+     o.itemid IN (
+     SELECT id from tbl_item
+     WHERE unitprice< (
+         SELECT MAX(unitprice)
+         from tbl_item)
+         )
+    limit 1;
+
+
+SELECT DISTINCT t.customerid
+     FROM tbl_Item i, Tbl_order t, Tbl_OrderItems o
+     WHERE t.id=o.orderid AND o.itemid = i.id and
+     o.itemid IN (
+     SELECT id from tbl_item
+     WHERE unitprice< (SELECT MAX(unitprice)
+     from tbl_item)
+     Order by unitprice desc
+     limit 1);
+
+
+/////// Archieves--- do not refer this
+Q5
+select i.ItemName
+from tbl_Item i, Tbl_order t, Tbl_OrderItems o
+where t.id=o.Orderid and
+i.id=o.Itemid
+group by o.itemId
+order by count(*) desc limit 1;
+
+
