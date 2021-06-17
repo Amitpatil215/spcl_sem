@@ -1,121 +1,121 @@
-create DATABASE shop;
+create DATABASE log;
 
-use shop;
+use log;
 
-CREATE TABLE tbl_order(
-	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	orderdate DATE NOT NULL,
-    customerid INT,
-    orderamount int
+CREATE TABLE library(
+	libid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	libname CHAR(25),
+    address CHAR(25)
 );
 
-INSERT INTO tbl_order
-	(id, orderdate, customerid, orderamount) VALUES
-		(1, '2020-11-10',10, 82),
-		(2, '2020-11-15',14,116);
 
+INSERT INTO library
+	(libid, libname, address) VALUES
+		(1, 'Wonders','Delhi'),
+		(2, 'ultimate','Noida'),
+		(3, 'read now','Gurgugram'),
+		(4, 'enhance','Mumbai'),
+		(5, 'sacrifice','Delhi'),
+		(6, 'sthcdks','Delhi');
 
-CREATE TABLE tbl_item(
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    itemname CHAR(25) ,
-    unitprice INT UNIQUE ,
-    stock INT NOT NULL
+CREATE TABLE books(
+	bid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	authorname CHAR(25),
+    genre CHAR(25)
 );
 
-INSERT INTO tbl_item
-	(id, itemname, unitprice, stock) VALUES
-		(1, 'Bread',30, 5),
-        (2, 'Butter',46, 10),
-        (3, 'Milk',45, 10),
-        (4, 'Eggs',6, 60),
-        (5, 'Parle-G',5,100),
-        (6, 'Rusk',35, 20);
+INSERT INTO books
+	(bid, authorname, genre) VALUES
+		(101, 'Kumar','historical'),
+		(102, 'Vishwas','mythological'),
+		(103, 'Devendra','mythological'),
+		(104, 'Modi','historical'),
+		(105, 'gadgil','mythological'),
+		(106, 'shek','historical');
 
-CREATE TABLE tbl_orderitems(
-    orderid INT ,
-    itemid INT ,
-    quantity INT NOT NULL,
-    FOREIGN KEY (orderid) REFERENCES tbl_order(id),
-    FOREIGN KEY (itemid) REFERENCES tbl_item(id),
-    PRIMARY KEY(orderid,itemid)
+CREATE TABLE purchase(
+	libid INT NOT NULL,
+	bid INT NOT NULL,
+	bookcost double,
+	FOREIGN KEY (libid) REFERENCES library(libid),
+    FOREIGN KEY (bid) REFERENCES books(bid)
 );
 
-INSERT INTO tbl_orderitems
-	(orderid, itemid, quantity) VALUES
-		(1, 1, 2),
-        (1,3, 1),
-        (1, 4, 12),
-        (2, 1, 1),
-        (2,2,2),
-        (2,4,6),
-        (2,5,4),
-        (2, 6, 1);
+INSERT INTO purchase
+	(libid,bid,bookcost) VALUES
+		(2, 101,100),
+		(3, 103,200),
+		(4, 104,100),
+		(1, 102,230),
+		(6, 103,300),
+		(6, 102,100),
+		(2, 105,430),
+		(1, 101,980),
+		(2, 104,320);
 
 Q2.
-select count(*)
-from tbl_item
-where itemName like "B%" OR itemName like "%k";
+Select *
+from library
+where address = "Delhi" and libname like "St_____";
 
-Q3.
-select i.itemName, sum(o.quantity) as quantity
-from tbl_item i, tbl_orderItems o
-where i.id = o.itemId
-group by o.itemId;
+Q3
+SELECT libid FROM library
+     WHERE libid IN (
+     SELECT libid from (
+     SELECT libid , SUM(bookcost) from purchase
+     group by libid ORDER BY sum(bookcost) DESC
+     LIMIT 1) rc);
 
 Q4.
-Select itemname from tbl_item
-where id not in
-    (
-    select id from
-    tbl_orderitems
-    );
 
-Q5
-SELECT DISTINCT i.itemName
-    FROM tbl_Item i
-     where i.id IN
-     (
-         select itemId
-         from tbl_orderItems
-         group by itemId
-         having count(itemId) IN
 
-           (select max(cnt) from
-            (select itemId, count(itemId) as cnt from tbl_orderItems
-            group by itemid) rc)
-     );
+select DISTINCT libname from library
+where libid in(
+	select DISTINCT p.libid
+ 	from purchase p, books b
+	where b.authorname="Ruskin Bond" AND
+	b.bid=p.bid
+	GROUP BY b.authorname
+	having count(*) >10
+);
+
+Q5.
+
+INSERT INTO books
+	(bid, authorname, genre) VALUES
+		(107, 'Ruskin bond','historical');
+
+INSERT INTO purchase
+	(libid,bid,bookcost) VALUES
+	(2, 107,320);
+
+select libname from library
+where libid in(
+select libid from purchase
+where bid in(
+select bid from books
+where authorname="Ruskin bond")
+);
 
 Q6
-SELECT DISTINCT t.customerid
-     FROM tbl_Item i, Tbl_order t, Tbl_OrderItems o
-     WHERE t.id=o.orderid AND
-     o.itemid IN (
-     SELECT id from tbl_item
-     WHERE unitprice< (
-         SELECT MAX(unitprice)
-         from tbl_item)
-         )
-    limit 1;
+INSERT INTO books
+	(bid, authorname, genre) VALUES
+		(108, 'Kumar','religious');
 
+select bid
+from books
+where genre = "religious"
+HAVING COUNT(DISTINCT genre)=1;
 
-SELECT DISTINCT t.customerid
-     FROM tbl_Item i, Tbl_order t, Tbl_OrderItems o
-     WHERE t.id=o.orderid AND o.itemid = i.id and
-     o.itemid IN (
-     SELECT id from tbl_item
-     WHERE unitprice< (SELECT MAX(unitprice)
-     from tbl_item)
-     Order by unitprice desc
-     limit 1);
-
-
-/////// Archieves--- do not refer this
-Q5
-select i.ItemName
-from tbl_Item i, Tbl_order t, Tbl_OrderItems o
-where t.id=o.Orderid and
-i.id=o.Itemid
-group by o.itemId
-order by count(*) desc limit 1;
-
-
+Q7
+select l.libbname , p.bookcost
+from purchase p, library l
+where p.libid = l.libid
+and p.bid in(
+select b.bid
+from  books b
+where b.genre = 'historical' and genre = 'mythological'
+and b.bid = p.bid)
+and p.bookcost = (select max(p1.bookcost)
+from purchase p1
+where p.bid = p1.bid);
