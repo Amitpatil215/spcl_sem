@@ -99,5 +99,103 @@ SELECT DISTINCT s.sname
 	       f.fid=c.fid;
 
 Q2
+SELECT MAX(S.age)
+FROM Student S
+    WHERE (S.major = ‘History’)
+        OR S.snum IN (SELECT E.snum
+            FROM Class C, Enrolled E, Faculty F
+            WHERE E.cname = C.cname AND C.fid = F.fid
+                AND F.fname = ‘I.Teach’ );
 
+Q3
+SELECT DISTINCT cname
+	FROM class
+	WHERE room='room128'
+	    OR
+	    cname IN (
+           SELECT e.cname 
+          FROM enrolled e 
+           GROUP BY e.cname 
+           HAVING COUNT(*)>=5
+        );
+Q4.
+SELECT DISTINCT s.sname
+	FROM student s
+	WHERE s.snum IN (
+                SELECT e1.snum
+				FROM enrolled e1,enrolled e2,class c1,class c2
+				WHERE e1.snum=e2.snum AND
+				e1.cname<>e2.cname AND
+			        c1.metts_at=c2.metts_at );
+Q5
+SELECT f.fname
+	FROM faculty f
+	WHERE f.fid in ( SELECT fid FROM class
+	GROUP BY fid 
+    HAVING COUNT(*)=(SELECT COUNT(DISTINCT room) 
+        FROM class) 
+     );
 
+Q6
+SELECT DISTINCT F.fname
+FROM Faculty F
+    WHERE 5 > (
+        SELECT COUNT(E.snum)
+        FROM Class C, Enrolled E
+        WHERE C.cname = E.cname
+        AND C.fid = F.fid);
+
+Q7
+SELECT S.level, AVG(S.age)
+FROM Student S
+GROUP BY S.level;
+
+Q8
+SELECT S.level, AVG(S.age)
+FROM Student S
+WHERE S.level <> ‘JR’
+GROUP BY S.level;
+
+Q9.
+SELECT F.fname, COUNT(*) AS CourseCount
+FROM Faculty F, Class C
+WHERE F.fid = C.fid 
+And C.room = ‘Room128’
+GROUP BY F.fid, F.fname;
+
+Q10.
+SELECT DISTINCT S.sname
+    FROM Student S 
+    WHERE S.snum IN (
+        SELECT E.snum
+        FROM Enrolled E 
+        GROUP BY E.snum 
+        HAVING COUNT(*) >= ALL (
+            SELECT COUNT(*)
+            FROM Enrolled E2 
+            GROUP BY E2.snum )
+            );
+Q11.
+SELECT DISTINCT S.sname
+FROM Student S
+WHERE S.snum NOT IN (
+    SELECT E.snum
+    FROM Enrolled E 
+    );
+
+Q12.
+SELECT S.age, S.level
+FROM Student S
+GROUP BY S.age, S.level
+HAVING S.level IN (
+    SELECT S1.level
+    FROM Student S1
+    WHERE S1.age = S.age
+    GROUP BY S1.level, S1.age
+    HAVING COUNT(*) >= ALL (
+        SELECT COUNT(*)
+        FROM Student S2 
+        WHERE s1.age = S2.age
+        GROUP BY S2.level, S2.age
+        )
+    );
