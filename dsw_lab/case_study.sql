@@ -131,3 +131,66 @@ INSERT INTO specifications
 		(112, 'Bling', 912),
 		(113, 'Link', 913),
 		(114, 'fiberezz', 914);
+
+Q1.
+Show all products having type of fashion and whose price is below 1000 INR
+
+SELECT p.*
+from products p, product_type t
+where
+	p.product_typeId=t.product_typeId AND
+	p.product_price<1000 AND
+	t.product_type_Name="Fashion";
+
++-----------+--------------+---------------+----------------+---------------+
+| productId | product_name | product_price | product_typeId | manufactureId |
++-----------+--------------+---------------+----------------+---------------+
+|       101 | Tshirt       |           400 |            774 |          5003 |
+|       104 | Jeans        |           900 |            774 |          5003 |
+|       119 | trowsers     |           899 |            774 |          5009 |
+|       120 | Plazzo       |           988 |            774 |          5010 |
++-----------+--------------+---------------+----------------+---------------+
+4 rows in set (0.001 sec)
+
+Q2. show product name, manufacturer name and support phone numbers whose
+	product review rating is less than 4
+
+SELECT p.product_name,r.review_rating ,m.manufacturer_name, m.support_phonenumber
+from products p, reviews r, manufacturer m
+where
+	p.productId = r.productId AND
+	p.manufactureId = m.manufactureId AND
+	r.review_rating < 4;
+
++--------------+---------------+------------------------+---------------------+
+| product_name | review_rating | manufacturer_name      | support_phonenumber |
++--------------+---------------+------------------------+---------------------+
+| Tshirt       |             2 | Action                 |          2147483647 |
+| Stove        |             3 | Alliance               |          1234567890 |
+| Jeans        |             2 | Action                 |          2147483647 |
+| Jeans        |             3 | Action                 |          2147483647 |
+| Rich Dad     |             3 | otal Manufacturing Co. |            63326432 |
+| xiomi        |             2 | Assured                |          2147483647 |
++--------------+---------------+------------------------+---------------------+
+6 rows in set (0.001 sec)
+
+Q3.
+Search product whose brand name starts with 'F'
+
+SELECT DISTINCT p.productId, p.product_name, s.brand, s.model_no
+from products p, specifications s
+where
+	p.productId = s.productId AND
+	s.brand LIKE 'F%';
+
++-----------+--------------+----------+----------+
+| productId | product_name | brand    | model_no |
++-----------+--------------+----------+----------+
+|       101 | Tshirt       | Fashadil |      901 |
+|       108 | Mouse        | Fashlux  |      908 |
+|       111 | Bulb         | Fashdeck |      911 |
+|       114 | Agnipath     | fiberezz |      914 |
++-----------+--------------+----------+----------+
+4 rows in set (0.001 sec)
+
+
