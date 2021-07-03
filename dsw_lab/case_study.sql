@@ -202,26 +202,13 @@ FROM products
 WHERE product_price > (SELECT avg(product_price) FROM Products)
 ORDER BY product_price;
 
-+---------------+---------------+
-| product_name  | product_price |
-+---------------+---------------+
-| Bulb          |            60 |
-| Bottle        |           100 |
-| CD DVD        |           100 |
-| Vico Termeric |           130 |
-| Led Strip     |           200 |
-| HDMI Cable    |           200 |
-| Pasta         |           200 |
-| Rich Dad      |           350 |
-| Dongle        |           378 |
-| Agnipath      |           400 |
-| Tshirt        |           400 |
-| Hair dryer    |           600 |
-| trowsers      |           899 |
-| Jeans         |           900 |
-| Web Cam       |           920 |
-| Mouse         |           943 |
-| Plazzo        |           988 |
-| Stove         |          1000 |
-+---------------+---------------+
-18 rows in set (0.001 sec)
++--------------+---------------+
+| product_name | product_price |
++--------------+---------------+
+| Makeup Kit   |          2000 |
+| Kurti        |          2333 |
+| xiomi        |         20000 |
++--------------+---------------+
+3 rows in set (0.016 sec)
+
+Q6
