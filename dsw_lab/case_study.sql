@@ -317,3 +317,28 @@ END$$
 DELIMITER ;
 
 Q9.
+While updating the price of products, its price must not be increased more than 10 percent of actual price.
+
+DELIMITER $$
+
+CREATE TRIGGER before_product_update
+BEFORE UPDATE
+ON products FOR EACH ROW
+BEGIN
+    DECLARE errorMessage VARCHAR(255);
+    SET errorMessage = CONCAT('The new price ',
+                        NEW.product_price,
+                        ' Price can not be updated more than 10% percent of actual price ',
+                        OLD.product_price);
+
+    IF new.product_price > (old.product_price * 0.10) +old.product_price THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = errorMessage;
+    END IF;
+END $$
+
+DELIMITER ;
+
+UPDATE products
+SET product_price = 20000
+where productId = 101;
