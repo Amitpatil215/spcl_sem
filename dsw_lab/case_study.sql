@@ -212,3 +212,108 @@ ORDER BY product_price;
 3 rows in set (0.016 sec)
 
 Q6
+Accoridng to new finincial budget, on every fashion product
+gov imposed a 2% tax, for the walefare of consumer company decided to
+add 5 INR on each product irrespective of its price. What is the final
+price to the consumers.
+
+Delimiter $$
+CREATE PROCEDURE getFinalPrice()
+BEGIN
+SELECT p.product_name , p.product_price + 5 as Price
+FROM products p
+where p.product_typeId IN
+	(
+		SELECT pt.product_typeId
+		FROM product_type pt
+		where pt.product_type_Name="FASHION"
+	);
+END $$
+
+Delimiter ;
+
+Q7.
+
+While adding new products if minimum price is less than 100
+set it to 100INR
+
+
+DELIMITER //
+
+Create Trigger before_insert_prodcuts
+BEFORE INSERT ON products FOR EACH ROW
+BEGIN
+IF NEW.product_price < 100 THEN SET NEW.product_price = 100;
+END IF;
+END //
+
+DELIMITER ;
+
+
+// For testing purposes
+INSERT INTO products
+	(productId, product_name, product_price,product_typeId,manufactureId) VALUES
+		(122, 'USB CABLE', 20, 777, 5007);
+
+MariaDB [shoppingproduct]> INSERT INTO products
+    -> (productId, product_name, product_price,product_typeId,manufactureId) VALUES
+    -> (122, 'USB CABLE', 20, 777, 5007);
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [shoppingproduct]> select * from products
+    -> ;
++-----------+---------------+---------------+----------------+---------------+
+| productId | product_name  | product_price | product_typeId | manufactureId |
++-----------+---------------+---------------+----------------+---------------+
+|       101 | Tshirt        |           400 |            774 |          5003 |
+|       102 | Bottle        |           100 |            775 |          5005 |
+|       103 | Stove         |          1000 |            775 |          5001 |
+|       104 | Jeans         |           900 |            774 |          5003 |
+|       118 | Led Strip     |           200 |            777 |          5008 |
+|       119 | trowsers      |           899 |            774 |          5009 |
+|       120 | Plazzo        |           988 |            774 |          5010 |
+|       121 | Kurti         |          2333 |            774 |          5004 |
+|       122 | USB CABLE     |           100 |            777 |          5007 |
++-----------+---------------+---------------+----------------+---------------+
+22 rows in set (0.000 sec)
+
+Q8.
+IF products gets deleted add them in productArchieves Table, which
+shows soft delete feature for training ML data models
+
+CREATE TABLE productArchieves(
+	productId INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	product_name CHAR(25),
+    product_price int,
+    product_typeId int,
+    manufactureId int,
+    FOREIGN KEY (product_typeId) REFERENCES product_type(product_typeId),
+    FOREIGN KEY (manufactureId) REFERENCES manufacturer(manufactureId)
+);
+
+MariaDB [shoppingproduct]> desc productArchieves;
++----------------+----------+------+-----+---------+----------------+
+| Field          | Type     | Null | Key | Default | Extra          |
++----------------+----------+------+-----+---------+----------------+
+| productId      | int(11)  | NO   | PRI | NULL    | auto_increment |
+| product_name   | char(25) | YES  |     | NULL    |                |
+| product_price  | int(11)  | YES  |     | NULL    |                |
+| product_typeId | int(11)  | YES  | MUL | NULL    |                |
+| manufactureId  | int(11)  | YES  | MUL | NULL    |                |
++----------------+----------+------+-----+---------+----------------+
+
+/// BEFORE DELETE Trigger
+
+DELIMITER $$
+
+CREATE TRIGGER before_product_delete
+BEFORE DELETE
+ON Products FOR EACH ROW
+BEGIN
+    INSERT INTO productArchieves(productId, product_name, product_price,product_typeId,manufactureId)
+    VALUES(OLD.productId,OLD.product_name,OLD.product_price,OLD.product_typeId,OLD.manufactureId);
+END$$
+
+DELIMITER ;
+
+Q9.
