@@ -342,3 +342,37 @@ DELIMITER ;
 UPDATE products
 SET product_price = 20000
 where productId = 101;
+
+Q10.Add a function to Show all the products with a particular brand name.
+
+BEGIN
+SELECT p.product_name , p.product_price  as Price
+FROM products p
+where p.productId IN
+	(
+		SELECT sp.productId
+		FROM specifications sp
+		where sp.brand=brand
+	);
+END
+
+Q11. Add a function for listing all the products are having rating greater than given and
+	from a specific category.
+
+BEGIN
+SELECT p.product_name , p.product_price
+FROM products p
+where p.product_typeId IN
+	(
+		SELECT pt.product_typeId
+		FROM product_type pt
+		where pt.product_type_Name= category
+	)
+	AND
+	p.productId IN
+	(
+		select r.productId
+		from reviews r
+		where r.review_rating > rating
+	);
+END
