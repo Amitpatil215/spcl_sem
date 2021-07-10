@@ -194,7 +194,7 @@ where
 4 rows in set (0.001 sec)
 
 
-Q5.
+Q4.
 Write a query to get Product list (id, name, unit price) of above average price.
 
 SELECT product_name, product_price
@@ -211,7 +211,7 @@ ORDER BY product_price;
 +--------------+---------------+
 3 rows in set (0.016 sec)
 
-Q6
+Q5
 Accoridng to new finincial budget, on every fashion product
 gov imposed a 2% tax, for the walefare of consumer company decided to
 add 5 INR on each product irrespective of its price. What is the final
@@ -232,7 +232,7 @@ END $$
 
 Delimiter ;
 
-Q7.
+Q6.
 
 While adding new products if minimum price is less than 100
 set it to 100INR
@@ -277,7 +277,7 @@ MariaDB [shoppingproduct]> select * from products
 +-----------+---------------+---------------+----------------+---------------+
 22 rows in set (0.000 sec)
 
-Q8.
+Q7.
 IF products gets deleted add them in productArchieves Table, which
 shows soft delete feature for training ML data models
 
@@ -316,7 +316,7 @@ END$$
 
 DELIMITER ;
 
-Q9.
+Q8.
 While updating the price of products, its price must not be increased more than 10 percent of actual price.
 
 DELIMITER $$
@@ -343,7 +343,7 @@ UPDATE products
 SET product_price = 20000
 where productId = 101;
 
-Q10.Add a function to Show all the products with a particular brand name.
+Q9.Add a function to Show all the products with a particular brand name.
 
 BEGIN
 SELECT p.product_name , p.product_price  as Price
@@ -356,7 +356,7 @@ where p.productId IN
 	);
 END
 
-Q11. Add a function for listing all the products are having rating greater than given and
+Q10. Add a function for listing all the products are having rating greater than given and
 	from a specific category.
 
 BEGIN
