@@ -420,3 +420,33 @@ END
 
 
 
+
+Q16
+
+BEGIN
+declare fin int default 0;
+DECLARE id int;
+DECLARE pname varchar(50);
+DECLARE price int;
+DECLARE ptname varchar(20);
+DECLARE br varchar(50);
+DECLARE mo int;
+DECLARE z_product
+    CURSOR FOR
+      SELECT p.productId,
+             p.product_name,
+             p.product_price,
+             pt.product_type_Name,
+             s.brand, s.model_no
+      FROM  product_type pt,products p,specifications s
+      where pt.product_typeId = p.product_typeId and p.productId = s.productId;
+DECLARE CONTINUE HANDLER FOR
+NOT FOUND SET fin = 1;
+ OPEN z_product; getdata: LOOP
+      fetch z_product INTO id,pname,price,ptname,br,mo;
+      IF fin = 1 THEN LEAVE getdata;
+		END IF;
+        select concat("Product -Id: ",id,"\n","Product-Name: ",pname,"\n","Price: ","RS ",price,"\n","Poduct-Category: ",ptname,"\n","Brand: ",br,"\n","Model-no: ",mo) as product_details;
+ END LOOP getdata;
+ close z_product;
+ end;
