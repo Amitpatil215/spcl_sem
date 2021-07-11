@@ -376,3 +376,47 @@ where p.product_typeId IN
 		where r.review_rating > rating
 	);
 END
+
+Q14. Using cursor check a product is top product or not, typically top product is having
+	user review rating is 5
+
+BEGIN
+
+DECLARE finished INTEGER DEFAULT 0;
+DECLARE p_id VARCHAR(100) Default "";
+
+-- declare cursor for product id
+
+DECLARE cur_product_id
+	 CURSOR FOR
+		SELECT p.productId
+		from products p, reviews r
+		where p.productId=r.productId AND
+	  	r.review_rating = 5;
+
+-- declare NOT FOUND handler
+	DECLARE CONTINUE HANDLER
+        FOR NOT FOUND SET finished = 1;
+
+OPEN cur_product_id;
+
+getID : LOOP
+		FETCH cur_product_id INTO p_id;
+
+		IF finished = 1 THEN
+			LEAVE getID;
+		END IF;
+
+		IF p_id = productID THEN
+			select p_id, "is a top product";
+		END IF;
+
+END LOOP getID;
+	CLOSE cur_product_id;
+
+END
+
+
+
+
+
